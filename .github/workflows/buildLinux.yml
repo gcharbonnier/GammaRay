@@ -61,7 +61,7 @@ jobs:
         -DGAMMARAY_PROBE_ONLY_BUILD=true \
         -DGAMMARAY_BUILD_UI=false  \
         -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install \
-        ../src/
+        ${{ github.workspace }}/src/
     
     - name: Zip-Release4cpp
       uses: darshitsri/zip-release@v3

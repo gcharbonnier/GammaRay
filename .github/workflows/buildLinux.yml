@@ -29,10 +29,12 @@ jobs:
         dir: '${{ github.workspace }}/qt6'
         version: "6.7.3" 
         cache: true
-        
+
+    
     - name: Fetch Gammaray sources
       uses: actions/checkout@v4
       with:
+        path: ./src
         submodules: recursive
         
     - name: Install Dependencies on Linux
@@ -47,7 +49,7 @@ jobs:
     - name: Build GammaRay
       run: |
         mkdir build && cd build/
-        cmake -G Ninja -DCMAKE_INSTALL_PREFIX='${{ github.workspace }}/install' -DCMAKE_PREFIX_PATH=${{ github.workspace }}/qt6/gcc_64 ..
+        cmake -G Ninja -DCMAKE_INSTALL_PREFIX='${{ github.workspace }}/install' -DCMAKE_PREFIX_PATH=${{ github.workspace }}/qt6/gcc_64 ../src/
         cmake --build .
         cmake --build . --target install 
         
@@ -59,7 +61,7 @@ jobs:
         -DGAMMARAY_PROBE_ONLY_BUILD=true \
         -DGAMMARAY_BUILD_UI=false  \
         -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install \
-        ..
+        ../src/
     
     - name: Zip-Release4cpp
       uses: darshitsri/zip-release@v3

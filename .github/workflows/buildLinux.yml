@@ -70,5 +70,11 @@ jobs:
         path: ${{ github.workspace }}/install/
     
    
-
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v4.6.2
+      with:
+        name: Gammaray3.2.zip
+        path: Gammaray3.2.zip
+        overwrite: true
+          
      

@@ -62,19 +62,47 @@ jobs:
         -DGAMMARAY_BUILD_UI=false  \
         -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install \
         ${{ github.workspace }}/src/
-    
-    - name: Zip-Release4cpp
-      uses: darshitsri/zip-release@v3
+
+    # Package into .AppImage
+    - name: Create AppImage
+      id: appimage
+      uses: Kidev/qt-appimage@v1
       with:
-        filename: Gammaray3.2.zip
-        path: ${{ github.workspace }}/install/
+        install_folder: ${{ github.workspace }}/install
+        app_name: 'Gammaray'
+        comment: 'Gammaray by KDAB'
+        category: 'Development'
+        icon: '${{ github.workspace }}/src/GammaRay/blob/master/ui/resources/gammaray/GammaRay-1024x1024.png'
+        binary: 'gammaray'
+
+      # Extract version from the commit tag
+    - name: Get Version
+      id: get_version
+      run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
+    # Create release and upload AppImage
+    - name: Create and Upload Release
+      uses: softprops/action-gh-release@v2
+      with:
+        files: ${{ steps.appimage.outputs.appimage }}
+        name: Gammaray ${{ steps.get_version.outputs.VERSION }}
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+    #- name: Zip-Release4cpp
+    #  uses: darshitsri/zip-release@v3
+    #  with:
+    #    filename: Gammaray3.2.zip
+    #    path: ${{ github.workspace }}/install/
     
    
-    - name: Upload a Build Artifact
-      uses: actions/upload-artifact@v4.6.2
-      with:
-        name: Gammaray3.2.zip
-        path: Gammaray3.2.zip
-        overwrite: true
+    #- name: Upload a Build Artifact
+    #  uses: actions/upload-artifact@v4.6.2
+    #  with:
+    #    name: Gammaray3.2.zip
+    #    path: Gammaray3.2.zip
+    #    overwrite: true
           
      

@@ -68,12 +68,13 @@ jobs:
       id: appimage
       uses: Kidev/qt-appimage@v1
       with:
-        install_folder: ${{ github.workspace }}/install
-        app_name: 'Gammaray'
-        comment: 'Gammaray by KDAB'
-        category: 'Development'
-        icon: '${{ github.workspace }}/src/GammaRay/blob/master/ui/resources/gammaray/GammaRay-1024x1024.png'
-        binary: 'gammaray'
+        #install_folder: '${{ github.workspace }}/install/'
+        install_folder: './install/'
+        #app_name: Gammaray
+        #comment: "Gammaray by KDAB"
+        #category: Development
+        #icon: "${{ github.workspace }}/src/GammaRay/blob/master/ui/resources/gammaray/GammaRay-1024x1024.png"
+        #binary: "gammaray"
 
       # Extract version from the commit tag
     - name: Get Version

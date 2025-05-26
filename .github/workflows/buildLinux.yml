@@ -74,7 +74,9 @@ jobs:
       id: appimage
       uses: Kidev/qt-appimage@v1
       with:
-        install_folder: '${{ github.workspace }}/build/install/'
+      
+        install_folder: '/home/runner/work/GammaRay/GammaRay/install'
+        #install_folder: '${{ github.workspace }}/build/install/'
         #app_name: Gammaray
         #comment: "Gammaray by KDAB"
         #category: Development

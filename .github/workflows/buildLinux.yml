@@ -48,10 +48,13 @@ jobs:
 
     - name: Build GammaRay
       run: |
+      
         mkdir build && cd build/
-        cmake -G Ninja -DCMAKE_INSTALL_PREFIX='${{ github.workspace }}/install' -DCMAKE_PREFIX_PATH=${{ github.workspace }}/qt6/gcc_64 ../src/
+        cmake -G Ninja -DCMAKE_INSTALL_PREFIX=$(readlink -f ./install) -DCMAKE_PREFIX_PATH=${{ github.workspace }}/qt6/gcc_64 ../src/
         cmake --build .
         cmake --build . --target install 
+        #cmake -G Ninja -DCMAKE_INSTALL_PREFIX='${{ github.workspace }}/install' -DCMAKE_PREFIX_PATH=${{ github.workspace }}/qt6/gcc_64 ../src/
+        
         
     - name: Build probe
       run: |
@@ -60,8 +63,10 @@ jobs:
         -DCMAKE_PREFIX_PATH=${{ github.workspace }}/qt5/gcc_64 \
         -DGAMMARAY_PROBE_ONLY_BUILD=true \
         -DGAMMARAY_BUILD_UI=false  \
-        -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install \
+        -DCMAKE_INSTALL_PREFIX=$(readlink -f ./install) \
         ${{ github.workspace }}/src/
+        
+      #-DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install \
 
     # Package into .AppImage
     - name: Create AppImage

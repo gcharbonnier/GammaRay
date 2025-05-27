@@ -85,17 +85,23 @@ jobs:
         export OUTPUT=${{ github.workspace }}/gammaray3-2.AppImage
         ./linuxdeploy-x86_64.AppImage --appdir ${{ github.workspace }}/appDir --plugin qt
         ./linuxdeploy-x86_64.AppImage --appdir ${{ github.workspace }}/appDir --output appimage
+
+    - name: Upload Tiled.AppImage
+      uses: actions/upload-artifact@v4
+      with:
+        name: gammaray3-2.AppImage
+        path: ${{ github.workspace }}/gammaray3-2.AppImage
         
     # Create release and upload AppImage
-    - name: Create and Upload Release
-      uses: softprops/action-gh-release@v2
-      with:
-        files: ${{ github.workspace }}/gammaray3-2.AppImage
-        name: Gammaray 3.2
-        draft: false
-        prerelease: false
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #- name: Create and Upload Release
+    #  uses: softprops/action-gh-release@v2
+    #  with:
+    #    files: ${{ github.workspace }}/gammaray3-2.AppImage
+    #    name: Gammaray 3.2
+    #    draft: false
+    #    prerelease: false
+    #  env:
+    #    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     
     # Package into .AppImage
     #- name: Create AppImage

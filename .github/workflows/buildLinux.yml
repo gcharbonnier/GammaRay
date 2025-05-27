@@ -76,12 +76,15 @@ jobs:
     
     - name: Create AppImage
       run: |
+        
+        mkdir -p ${{ github.workspace }}/appDir/usr/
+        mv ${{ github.workspace }}/install/* ${{ github.workspace }}/appDir/usr/
         wget --no-verbose "https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage"
         wget --no-verbose "https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage"
         chmod +x linuxdeploy*.AppImage
         export OUTPUT=${{ github.workspace }}/gammaray3-2.AppImage
-        ./linuxdeploy-x86_64.AppImage --appdir ${{ github.workspace }}/install --plugin qt
-        ./linuxdeploy-x86_64.AppImage --appdir ${{ github.workspace }}/install --output appimage
+        ./linuxdeploy-x86_64.AppImage --appdir ${{ github.workspace }}/appDir --plugin qt
+        ./linuxdeploy-x86_64.AppImage --appdir ${{ github.workspace }}/appDir --output appimage
         mv *.AppImage ${{ github.workspace }}/gammaray3-2.AppImage
         
         

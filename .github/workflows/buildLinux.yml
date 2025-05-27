@@ -35,8 +35,7 @@ jobs:
         
     - name: c🧾Get Version
       id: get_version
-      run: echo "::set-env name=VERSION::$(cat ${{ github.workspace }}/version.txt)"
-      #run: echo "VERSION=cat ${{ github.workspace }}/version.txt" >> $GITHUB_OUTPUT
+      run: echo "VERSION=$(cat ${{ github.workspace }}/version.txt)" >> $GITHUB_OUTPUT
         
     - name: 💎Install Dependencies on Linux
       run: |

@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04 #AppImage will run on more os than if build with "ubuntu-latest"
+    runs-on: ubuntu-18.04 #AppImage will run on more os than if build with "ubuntu-latest"
     
         
     steps:

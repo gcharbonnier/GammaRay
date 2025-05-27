@@ -8,12 +8,12 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04 #AppImage will run on more os than if build with "ubuntu-latest"
     
         
     steps:
     
-    - name: install Qt5
+    - name: 📦5️⃣ install Qt5
       uses: jurplel/install-qt-action@v4
       with:
         #aqtversion: null # use whatever the default is
@@ -21,7 +21,7 @@ jobs:
         version: "5.15.2" 
         cache: true
         
-    - name: install Qt6
+    - name: 📦6️⃣ install Qt6
       uses: jurplel/install-qt-action@v4
       with:
         #aqtversion: null # use whatever the default is
@@ -37,16 +37,16 @@ jobs:
         path: ./src
         submodules: recursive
         
-    - name: Install Dependencies on Linux
+    - name: 💎Install Dependencies on Linux
       run: |
         sudo apt update -qq
         sudo apt install -y gdb doxygen
 
     
-    - name: Install ninja-build tool (must be after Qt due PATH changes)
+    - name: 💎Install ninja-build tool (must be after Qt due PATH changes)
       uses: turtlesec-no/get-ninja@main
 
-    - name: Build GammaRay
+    - name: 🛠️ Build GammaRay
       run: |
         mkdir build && cd build/
         cmake -G Ninja -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install/ -DCMAKE_PREFIX_PATH=${{ github.workspace }}/qt6/gcc_64 ../src/
@@ -55,7 +55,7 @@ jobs:
         #cmake -G Ninja -DCMAKE_INSTALL_PREFIX='${{ github.workspace }}/install' -DCMAKE_PREFIX_PATH=${{ github.workspace }}/qt6/gcc_64 ../src/
         
         
-    - name: Build probe
+    - name: 🛠️ Build probe
       run: |
         cmake \
         -DCMAKE_BUILD_TYPE=Release \
@@ -74,7 +74,7 @@ jobs:
 
     #wget https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
     
-    - name: Create AppImage
+    - name: 🐧Create AppImage
       run: |
         
         mkdir -p ${{ github.workspace }}/appDir/usr/
@@ -86,7 +86,7 @@ jobs:
         ./linuxdeploy-x86_64.AppImage --appdir ${{ github.workspace }}/appDir --plugin qt
         ./linuxdeploy-x86_64.AppImage --appdir ${{ github.workspace }}/appDir --output appimage
 
-    - name: Upload Tiled.AppImage
+    - name: 💎Upload Gammaray.AppImage
       uses: actions/upload-artifact@v4
       with:
         name: gammaray3-2.AppImage

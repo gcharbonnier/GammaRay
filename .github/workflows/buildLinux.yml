@@ -48,7 +48,6 @@ jobs:
 
     - name: Build GammaRay
       run: |
-      
         mkdir build && cd build/
         cmake -G Ninja -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install/ -DCMAKE_PREFIX_PATH=${{ github.workspace }}/qt6/gcc_64 ../src/
         cmake --build .
@@ -66,15 +65,25 @@ jobs:
         -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install/ \
         ${{ github.workspace }}/src/
 
-    - name: Create AppImage
-      run: |
-        wget https://github.com/linuxdeploy/linuxdeploy/releases/latest/download/linuxdeploy-x86_64.AppImage
-        chmod +x linuxdeploy*.AppImage
-        ./linuxdeploy-x86_64.AppImage --appdir ${{ github.workspace }}/install --plugin qt --output appimage
-        mv *.AppImage ${{ github.workspace }}/gammaray3-2.AppImage
+    #- name: Create AppImage
+    #  run: |
+    #    wget https://github.com/linuxdeploy/linuxdeploy/releases/latest/download/linuxdeploy-x86_64.AppImage
+    #    chmod +x linuxdeploy*.AppImage
+    #    ./linuxdeploy-x86_64.AppImage --appdir ${{ github.workspace }}/install --plugin qt --output appimage
+    #    mv *.AppImage ${{ github.workspace }}/gammaray3-2.AppImage
 
     #wget https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
-
+    
+    - name: Create AppImage
+      run: |
+        wget --no-verbose "https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage"
+        wget --no-verbose "https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage"
+        chmod +x linuxdeploy*.AppImage
+        export OUTPUT=${{ github.workspace }}/gammaray3-2.AppImage
+        ./linuxdeploy-x86_64.AppImage --appdir ${{ github.workspace }}/install --plugin qt
+        ./linuxdeploy-x86_64.AppImage --appdir ${{ github.workspace }}/install --output appimage
+        mv *.AppImage ${{ github.workspace }}/gammaray3-2.AppImage
+        
         
     # Create release and upload AppImage
     - name: Create and Upload Release

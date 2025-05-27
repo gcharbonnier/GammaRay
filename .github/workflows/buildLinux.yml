@@ -85,8 +85,6 @@ jobs:
         export OUTPUT=${{ github.workspace }}/gammaray3-2.AppImage
         ./linuxdeploy-x86_64.AppImage --appdir ${{ github.workspace }}/appDir --plugin qt
         ./linuxdeploy-x86_64.AppImage --appdir ${{ github.workspace }}/appDir --output appimage
-        mv *.AppImage ${{ github.workspace }}/gammaray3-2.AppImage
-        
         
     # Create release and upload AppImage
     - name: Create and Upload Release

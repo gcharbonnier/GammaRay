@@ -8,11 +8,8 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-18.04 #AppImage will run on more os than if build with "ubuntu-latest"
-    
-        
+    runs-on: ubuntu-22.04 #AppImage will run on more os than if build with "ubuntu-latest"
     steps:
-    
     - name: 📦5️⃣ install Qt5
       uses: jurplel/install-qt-action@v4
       with:
@@ -30,102 +27,60 @@ jobs:
         version: "6.7.3" 
         cache: true
 
-    
-    - name: Fetch Gammaray sources
+    - name: 👀 Fetch Gammaray sources
       uses: actions/checkout@v4
       with:
         path: ./src
         submodules: recursive
+        
+    - name: c🧾Get Version
+      id: get_version
+      run: echo "VERSION=cat ${{ github.workspace }}/version.txt" >> $GITHUB_OUTPUT
         
     - name: 💎Install Dependencies on Linux
       run: |
         sudo apt update -qq
         sudo apt install -y gdb doxygen
 
-    
     - name: 💎Install ninja-build tool (must be after Qt due PATH changes)
       uses: turtlesec-no/get-ninja@main
 
     - name: 🛠️ Build GammaRay
       run: |
         mkdir build && cd build/
-        cmake -G Ninja -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install/ -DCMAKE_PREFIX_PATH=${{ github.workspace }}/qt6/gcc_64 ../src/
+        cmake -G Ninja \
+          -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install/ \
+          -DCMAKE_PREFIX_PATH=${{ github.workspace }}/qt6/gcc_64 \
+          -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=OFF \
+          ../src/
         cmake --build .
         cmake --build . --target install 
-        #cmake -G Ninja -DCMAKE_INSTALL_PREFIX='${{ github.workspace }}/install' -DCMAKE_PREFIX_PATH=${{ github.workspace }}/qt6/gcc_64 ../src/
-        
         
     - name: 🛠️ Build probe
       run: |
         cmake \
         -DCMAKE_BUILD_TYPE=Release \
-        -DCMAKE_PREFIX_PATH=${{ github.workspace }}/qt5/gcc_64 \
+        -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install/ \
+        -DCMAKE_PREFIX_PATH=${{ github.workspace }}/qt5 \
         -DGAMMARAY_PROBE_ONLY_BUILD=true \
         -DGAMMARAY_BUILD_UI=false  \
-        -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install/ \
         ${{ github.workspace }}/src/
-
-    #- name: Create AppImage
-    #  run: |
-    #    wget https://github.com/linuxdeploy/linuxdeploy/releases/latest/download/linuxdeploy-x86_64.AppImage
-    #    chmod +x linuxdeploy*.AppImage
-    #    ./linuxdeploy-x86_64.AppImage --appdir ${{ github.workspace }}/install --plugin qt --output appimage
-    #    mv *.AppImage ${{ github.workspace }}/gammaray3-2.AppImage
-
-    #wget https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
-    
+ 
     - name: 🐧Create AppImage
-      run: |
-        
+      run: |      
         mkdir -p ${{ github.workspace }}/appDir/usr/
         mv ${{ github.workspace }}/install/* ${{ github.workspace }}/appDir/usr/
         wget --no-verbose "https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage"
         wget --no-verbose "https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage"
         chmod +x linuxdeploy*.AppImage
-        export OUTPUT=${{ github.workspace }}/gammaray3-2.AppImage
+        export OUTPUT=${{ github.workspace }}/gammaray${{ steps.get_version.outputs.VERSION }}.AppImage
         ./linuxdeploy-x86_64.AppImage --appdir ${{ github.workspace }}/appDir --plugin qt
         ./linuxdeploy-x86_64.AppImage --appdir ${{ github.workspace }}/appDir --output appimage
 
     - name: 💎Upload Gammaray.AppImage
       uses: actions/upload-artifact@v4
       with:
-        name: gammaray3-2.AppImage
-        path: ${{ github.workspace }}/gammaray3-2.AppImage
+        name: gammaray${{ steps.get_version.outputs.VERSION }}.AppImage
+        path: ${{ github.workspace }}/gammaray${{ steps.get_version.outputs.VERSION }}.AppImage
         
-    # Create release and upload AppImage
-    #- name: Create and Upload Release
-    #  uses: softprops/action-gh-release@v2
-    #  with:
-    #    files: ${{ github.workspace }}/gammaray3-2.AppImage
-    #    name: Gammaray 3.2
-    #    draft: false
-    #    prerelease: false
-    #  env:
-    #    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     
-    # Package into .AppImage
-    #- name: Create AppImage
-    #  id: appimage
-    #  uses: Kidev/qt-appimage@v1
-    #  with:
-    #    install_folder: '/home/runner/work/GammaRay/GammaRay/install'
-
-      # Extract version from the commit tag
-    #- name: Get Version
-    #  id: get_version
-    #  run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
-
-    # Create release and upload AppImage
-    #- name: Create and Upload Release
-    #  uses: softprops/action-gh-release@v2
-    #  with:
-    #    files: ${{ steps.appimage.outputs.appimage }}
-    #    name: Gammaray ${{ steps.get_version.outputs.VERSION }}
-    #    draft: false
-    #    prerelease: false
-    #  env:
-    #    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          
-
-          
-     

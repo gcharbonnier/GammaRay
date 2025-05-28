@@ -27,15 +27,13 @@ jobs:
         version: "6.7.3" 
         cache: true
 
-    - name: 👀 Fetch Gammaray sources
+    - name: 👀 Fetch Gammaray sources(directly from kdab repo)
       uses: actions/checkout@v4
       with:
+        repository: KDAB/GammaRay
+        ref: v3.2.0
         path: ./src
         submodules: recursive
-        
-    - name: c🧾Get Version
-      id: get_version
-      run: echo "VERSION=$(cat ${{ github.workspace }}/version.txt)" >> $GITHUB_OUTPUT
         
     - name: 💎Install Dependencies on Linux
       run: |
@@ -50,8 +48,10 @@ jobs:
         mkdir build && cd build/
         cmake -G Ninja \
           -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install/ \
-          -DCMAKE_PREFIX_PATH=${{ github.workspace }}/qt6/gcc_64 \
+          -DCMAKE_PREFIX_PATH=${{ github.workspace }}/qt6 \
           -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=OFF \
+          -DGAMMARAY_BUILD_DOCS=true \
+          -DQT_VERSION_MAJOR=6 \
           ../src/
         cmake --build .
         cmake --build . --target install 
@@ -63,6 +63,7 @@ jobs:
         -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install/ \
         -DCMAKE_PREFIX_PATH=${{ github.workspace }}/qt5 \
         -DGAMMARAY_PROBE_ONLY_BUILD=true \
+        -DQT_VERSION_MAJOR=5 \
         -DGAMMARAY_BUILD_UI=false  \
         ${{ github.workspace }}/src/
  
@@ -73,14 +74,14 @@ jobs:
         wget --no-verbose "https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage"
         wget --no-verbose "https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage"
         chmod +x linuxdeploy*.AppImage
-        export OUTPUT=${{ github.workspace }}/gammaray${{ steps.get_version.outputs.VERSION }}.AppImage
+        export OUTPUT=${{ github.workspace }}/gammarayv3.2.0.AppImage
         ./linuxdeploy-x86_64.AppImage --appdir ${{ github.workspace }}/appDir --plugin qt
         ./linuxdeploy-x86_64.AppImage --appdir ${{ github.workspace }}/appDir --output appimage
 
     - name: 💎Upload Gammaray.AppImage
       uses: actions/upload-artifact@v4
       with:
-        name: gammaray${{ steps.get_version.outputs.VERSION }}.AppImage
-        path: ${{ github.workspace }}/gammaray${{ steps.get_version.outputs.VERSION }}.AppImage
+        name: gammarayv3.2.0.AppImage
+        path: ${{ github.workspace }}/gammarayv3.2.0.AppImage
         
     

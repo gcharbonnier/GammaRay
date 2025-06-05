@@ -43,6 +43,20 @@ jobs:
     - name: 💎Install ninja-build tool (must be after Qt due PATH changes)
       uses: turtlesec-no/get-ninja@main
 
+    # this shouldnt be needed
+    - name: 🛠️ Build GammaRay Qt5
+      run: |
+        mkdir build && cd build/
+        cmake -G Ninja \
+          -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install/ \
+          -DCMAKE_PREFIX_PATH=${{ github.workspace }}/qt5 \
+          -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=OFF \
+          -DGAMMARAY_BUILD_DOCS=true \
+          -DQT_VERSION_MAJOR=5 \
+          ../src/
+        cmake --build .
+        cmake --build . --target install 
+        
     - name: 🛠️ Build GammaRay
       run: |
         mkdir build && cd build/
